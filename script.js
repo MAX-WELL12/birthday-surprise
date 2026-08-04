@@ -4,7 +4,7 @@
 
 // Set the unlock date
 // Change the year if needed
-const unlockDate = new Date("August 19, 2026 00:00:00").getTime();
+const unlockDate = new Date("August 18, 2026 00:00:00").getTime();
 
 // Countdown Elements
 const days = document.getElementById("days");
