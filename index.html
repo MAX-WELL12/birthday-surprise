@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Happy Birthday!</title>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Dancing+Script:wght@600&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #000;
+      color: #ff2a8d;
+      font-family: 'Poppins', sans-serif;
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    /* Screen 1: Matrix Intro View */
+    #matrix-view {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      z-index: 10;
+    }
+    canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+    .content-box { position: relative; z-index: 2; text-align: center; }
+    .countdown-text {
+      font-size: 3.5rem; font-weight: 900; color: #ff2a8d;
+      text-shadow: 0 0 15px #ff2a8d; margin-bottom: 20px;
+      font-family: monospace;
+    }
+    .gift-btn {
+      display: none; background: rgba(10, 0, 15, 0.9);
+      border: 2px solid #ff2a8d; color: #fff;
+      padding: 20px 30px; border-radius: 20px;
+      cursor: pointer; box-shadow: 0 0 25px rgba(255, 42, 141, 0.5);
+      transition: transform 0.2s;
+    }
+    .gift-btn:hover { transform: scale(1.05); }
+
+    /* Screen 2: Birthday Letter View */
+    #letter-view {
+      display: none;
+      width: 100%; min-height: 100vh;
+      background: linear-gradient(180deg, #fffcf5 0%, #f7efe2 100%);
+      color: #333; padding: 20px 15px;
+      position: relative; box-sizing: border-box;
+    }
+
+    .back-btn {
+      position: absolute; top: 15px; left: 15px;
+      background: #4a4543; color: #fff; border: none;
+      padding: 8px 16px; border-radius: 20px;
+      font-size: 0.9rem; cursor: pointer; z-index: 100;
+    }
+
+    /* Hanging Letter Banner Tiles */
+    .bunting-container {
+      margin: 40px auto 10px auto;
+      max-width: 400px; text-align: center;
+    }
+    .string-row { position: relative; margin-bottom: 12px; height: 50px; }
+    .string-line {
+      position: absolute; top: 10px; left: 5%; width: 90%; height: 20px;
+      border-bottom: 2px solid #a89f91; border-radius: 50%;
+    }
+    .tiles {
+      position: relative; z-index: 2;
+      display: flex; justify-content: center; gap: 6px;
+    }
+    .tile {
+      width: 32px; height: 38px; border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: bold; font-size: 1.1rem; color: #222;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.15); border: 1px solid rgba(0,0,0,0.1);
+      position: relative; margin-top: 10px;
+    }
+    .tile::before {
+      content: ''; position: absolute; top: -8px; left: 50%;
+      transform: translateX(-50%); width: 1px; height: 8px; background: #888;
+    }
+
+    /* Color Palette */
+    .c-y { background-color: #fce181; }
+    .c-r { background-color: #f9989b; }
+    .c-b { background-color: #7bd5f5; }
+    .c-p { background-color: #c792ea; }
+    .c-g { background-color: #a0e4b0; }
+
+    .divider { text-align: center; color: #d4af37; font-size: 1.2rem; margin: 15px 0; }
+
+    /* Note Card */
+    .note-card {
+      max-width: 420px; margin: 0 auto;
+      background: #fbf8ef; border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      border-top: 6px solid #f9989b; padding: 25px 20px;
+      background-image: repeating-linear-gradient(#fbf8ef 0px, #fbf8ef 27px, #e8e2d5 28px);
+      line-height: 28px;
+    }
+    .note-content {
+      font-family: 'Caveat', cursive; font-size: 1.5rem;
+      color: #3a322d; text-align: center;
+    }
+
+    .signature { text-align: center; margin-top: 25px; }
+    .sig-sub { font-size: 0.75rem; letter-spacing: 2px; color: #8c827a; text-transform: uppercase; }
+    .sig-name { font-family: 'Dancing Script', cursive; font-size: 2.2rem; color: #d1938a; }
+  </style>
+</head>
+<body>
+
+  <!-- Screen 1: Matrix View -->
+  <div id="matrix-view">
+    <canvas id="matrix"></canvas>
+    <div class="content-box">
+      <div class="countdown-text" id="displayText">3</div>
+      <div class="gift-btn" id="giftBtn" onclick="openLetter()">
+        <div style="font-size: 50px;">🎁</div>
+        <p>Tap to open your gift!</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Screen 2: Birthday Letter View -->
+  <div id="letter-view">
+    <button class="back-btn" onclick="goBack()">← Go back</button>
+
+    <div class="bunting-container">
+      <!-- Row 1: HAPPY -->
+      <div class="string-row">
+        <div class="string-line"></div>
+        <div class="tiles">
+          <div class="tile c-y">H</div><div class="tile c-r">A</div>
+          <div class="tile c-b">P</div><div class="tile c-p">P</div><div class="tile c-g">Y</div>
+        </div>
+      </div>
+      <!-- Row 2: BIRTHDAY -->
+      <div class="string-row">
+        <div class="string-line"></div>
+        <div class="tiles">
+          <div class="tile c-g">B</div><div class="tile c-y">I</div>
+          <div class="tile c-r">R</div><div class="tile c-b">T</div>
+          <div class="tile c-p">H</div><div class="tile c-y">D</div>
+          <div class="tile c-r">A</div><div class="tile c-g">Y</div>
+        </div>
+      </div>
+      <!-- Row 3: WILLIE -->
+      <div class="string-row">
+        <div class="string-line"></div>
+        <div class="tiles">
+          <div class="tile c-y">W</div><div class="tile c-p">I</div>
+          <div class="tile c-y">L</div><div class="tile c-r">L</div>
+          <div class="tile c-b">I</div><div class="tile c-g">E</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider">✦</div>
+
+    <!-- Letter Note Card -->
+    <div class="note-card">
+      <div class="note-content">
+        Hi Willie,<br><br>
+        Happy Birthday, this is the best thing I could think of after my last one became a disaster I'll try better next yr....but all am gonna say is your an amazing person and I hope you enjoy your special day and you experience more with the special people around you. Happy Birthday 🎂
+      </div>
+    </div>
+
+    <div class="signature">
+      <div class="sig-sub">With all my love,</div>
+      <div class="sig-name">Maxxie</div>
+    </div>
+  </div>
+
+  <!-- Background Music -->
+  <audio id="bgMusic" loop preload="auto">
+    <source src="colors.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    // --- Matrix Animation ---
+    const canvas = document.getElementById('matrix');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth; 
+    canvas.height = window.innerHeight;
+    const chars = '0123456789ABCDEF💕✨🎂';
+    const drops = Array(Math.floor(canvas.width / 16)).fill(1);
+
+    function drawMatrix() {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#ff2a8d'; 
+      ctx.font = '16px monospace';
+      for (let i = 0; i < drops.length; i++) {
+        const text = chars.charAt(Math.floor(Math.random() * chars.length));
+        ctx.fillText(text, i * 16, drops[i] * 16);
+        if (drops[i] * 16 > canvas.height && Math.random() > 0.975) drops[i] = 0;
+        drops[i]++;
+      }
+    }
+    setInterval(drawMatrix, 33);
+
+    // --- Sequence Controller ---
+    const sequence = ['3', '2', '1', 'HAPPY', 'BIRTHDAY!'];
+    let step = 0;
+    function runSequence() {
+      if (step < sequence.length) {
+        document.getElementById('displayText').innerText = sequence[step++];
+        setTimeout(runSequence, 1000);
+      } else {
+        document.getElementById('displayText').style.display = 'none';
+        document.getElementById('giftBtn').style.display = 'block';
+      }
+    }
+    setTimeout(runSequence, 500);
+
+    // --- Navigation & Audio Controller ---
+    function openLetter() {
+      document.getElementById('matrix-view').style.display = 'none';
+      document.getElementById('letter-view').style.display = 'block';
+
+      // Play audio when user taps the gift button
+      const music = document.getElementById('bgMusic');
+      music.play().catch(err => console.log("Audio playback error:", err));
+    }
+
+    function goBack() {
+      document.getElementById('letter-view').style.display = 'none';
+      document.getElementById('matrix-view').style.display = 'flex';
+
+      // Pause audio and reset track
+      const music = document.getElementById('bgMusic');
+      music.pause();
+      music.currentTime = 0;
+    }
+  </script>
+</body>
+</html>
